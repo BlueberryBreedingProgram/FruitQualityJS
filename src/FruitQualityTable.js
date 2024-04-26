@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Table, Button, Dialog, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, TablePagination, TextField, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
-import { debounce } from 'lodash';
 import EditFruitDialog from './EditFruitDialog';
 
 const FruitQualityTable = () => {
@@ -15,18 +14,14 @@ const FruitQualityTable = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
 
-  const fetchData = useCallback(debounce(async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     const query = `search=${encodeURIComponent(search)}&orderBy=${orderBy}&startAt=${page * rowsPerPage}&limit=${rowsPerPage}`;
     try {
       const response = await fetch(`https://savaglisic2001.pythonanywhere.com/fruit_quality?${query}`);
       if (response.ok) {
         const { data, total } = await response.json();
-        const formattedData = data.map(entry => ({
-          ...entry,
-          dateAndTime: formatDate(entry.dateAndTime)
-        }));
-        setData(formattedData);
+        setData(data);
         setTotalRows(total);
       } else {
         throw new Error('Network response was not ok.');
@@ -35,7 +30,7 @@ const FruitQualityTable = () => {
       console.error('Failed to fetch data:', error);
     }
     setLoading(false);
-  }, 400), [search, orderBy, page, rowsPerPage]);
+  }, [search, orderBy, page, rowsPerPage]);
 
   useEffect(() => {
     fetchData();
@@ -122,6 +117,9 @@ const FruitQualityTable = () => {
               label="Order By"
               onChange={handleOrderByChange}
             >
+              <MenuItem value="dateAndTime">Date</MenuItem>
+              <MenuItem value="project">Project</MenuItem>
+              <MenuItem value="week">Week</MenuItem>
               <MenuItem value="dummyCode">Barcode</MenuItem>
               <MenuItem value="genotype">Genotype</MenuItem>
               <MenuItem value="Brix">Brix</MenuItem>
