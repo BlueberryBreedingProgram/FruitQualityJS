@@ -30,22 +30,31 @@ const EditFruitDialog = ({ rowData, onClose, onSaveSuccess }) => {
     }
   };
 
+  const fieldOrder = [
+    'dummyCode', 'genotype', 'project', 'site', 'block', 'bush', 'box',
+    'stage', 'week', 'dateAndTime', 'Brix', 'TTA', 'avgDiameter',
+    'avgFirmness', 'mass', 'pH', 'mlAdded', 'numOfBerries', 'sdDiameter',
+    'sdFirmness', 'xBerryMass', 'postHarvest', 'notes'
+  ];  
+
   return (
     <>
       <DialogTitle>Edit Fruit Record</DialogTitle>
       <DialogContent>
-        {Object.keys(formData).map((key) => (
-          <TextField
-            key={key}
-            margin="dense"
-            label={key}
-            type="text"
-            fullWidth
-            variant="outlined"
-            name={key}
-            value={formData[key] || ''}
-            onChange={handleChange}
-          />
+        {fieldOrder.map((key) => (
+          formData[key] !== undefined && (
+            <TextField
+              key={key}
+              margin="dense"
+              label={key}
+              type="text"
+              fullWidth
+              variant="outlined"
+              name={key}
+              value={formData[key] || ''}
+              onChange={handleChange}
+            />
+          )
         ))}
       </DialogContent>
       <DialogActions>
@@ -54,7 +63,7 @@ const EditFruitDialog = ({ rowData, onClose, onSaveSuccess }) => {
       </DialogActions>
     </>
   );
-};
+}  
 
 export default EditFruitDialog;
 
