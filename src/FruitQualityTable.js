@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Table, Button,TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, TablePagination, TextField, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import { Table, Button, Dialog, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, TablePagination, TextField, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import { debounce } from 'lodash';
+import EditFruitDialog from './EditFruitDialog';
 
 const FruitQualityTable = () => {
   const [data, setData] = useState([]);
@@ -11,6 +12,8 @@ const FruitQualityTable = () => {
   const [orderBy, setOrderBy] = useState('dummyCode');
   const [syncing, setSyncing] = useState(false);
   const [totalRows, setTotalRows] = useState(0);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const fetchData = useCallback(debounce(async () => {
     setLoading(true);
@@ -80,6 +83,16 @@ const FruitQualityTable = () => {
     setSyncing(false);
   };
 
+  const handleRowClick = (row) => {
+    setSelectedRow(row);
+    setEditDialogOpen(true);
+  };
+
+  const handleSaveSuccess = () => {
+    setEditDialogOpen(false);  // Close dialog
+    fetchData();  // Refresh data
+  };
+
   return (
     <TableContainer component={Paper}>
       <div style={{ display: 'flex', flexDirection: 'column', padding: '10px' }}>
@@ -145,7 +158,7 @@ const FruitQualityTable = () => {
           </TableHead>
           <TableBody>
             {data.map((row, index) => (
-              <TableRow key={index}>
+               <TableRow key={index} hover onClick={() => handleRowClick(row)} style={{ cursor: 'pointer' }}>
                 <TableCell>{row.dummyCode}</TableCell>
                 <TableCell align="right">{row.genotype}</TableCell>
                 <TableCell align="right">{row.Brix || 'N/A'}</TableCell>
@@ -168,6 +181,9 @@ const FruitQualityTable = () => {
             ))}
           </TableBody>
           </Table>
+          <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
+            <EditFruitDialog rowData={selectedRow} onClose={() => setEditDialogOpen(false)} onSaveSuccess={handleSaveSuccess} />
+          </Dialog>
           <TablePagination
             component="div"
             count={totalRows}
