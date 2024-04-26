@@ -37,7 +37,7 @@ function App() {
             }}
           >
             <Typography variant="h1" gutterBottom style={{ fontSize: '5.0rem' }}>
-              Test Data
+              Fruit Quality
             </Typography>
             <div>
               <FruitQualityTable />

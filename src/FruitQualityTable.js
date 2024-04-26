@@ -78,6 +78,10 @@ const FruitQualityTable = () => {
     setSyncing(false);
   };
 
+  const handleDownloadExcel = () => {
+    window.location.href = 'https://savaglisic2001.pythonanywhere.com/download_fruit_quality';
+  };
+
   const handleRowClick = (row) => {
     setSelectedRow(row);
     setEditDialogOpen(true);
@@ -99,6 +103,13 @@ const FruitQualityTable = () => {
           style={{ marginBottom: '10px' }}
         >
           {syncing ? 'Syncing...' : 'Sync Database'}
+        </Button>
+        <Button
+          variant="contained"
+          style={{ backgroundColor: 'green', color: 'white', marginBottom: '10px' }}
+          onClick={handleDownloadExcel}
+        >
+          Download Excel
         </Button>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <TextField
