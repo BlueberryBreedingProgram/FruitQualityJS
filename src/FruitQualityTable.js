@@ -92,6 +92,8 @@ const FruitQualityTable = () => {
     fetchData();  // Refresh data
   };
 
+  const headerCells = ['Barcode', 'Genotype', 'Brix', 'TTA', 'Avg Diameter', 'Avg Firmness', 'Mass (g)', 'pH', 'Site', 'Block', 'Bush', 'Box', 'Time', 'Notes', 'Project', 'Stage', 'Week', 'Post Harvest'];
+
   return (
     <TableContainer component={Paper}>
       <div style={{ display: 'flex', flexDirection: 'column', padding: '10px' }}>
@@ -144,25 +146,19 @@ const FruitQualityTable = () => {
         <>
           <Table aria-label="fruit quality table" stickyHeader>
           <TableHead>
-            <TableRow>
-              <TableCell>Barcode</TableCell>
-              <TableCell align="right">Genotype</TableCell>
-              <TableCell align="right">Brix</TableCell>
-              <TableCell align="right">TTA</TableCell>
-              <TableCell align="right">Avg Diameter</TableCell>
-              <TableCell align="right">Avg Firmness</TableCell>
-              <TableCell align="right">Mass (g)</TableCell>
-              <TableCell align="right">pH</TableCell>
-              <TableCell align="right">Site</TableCell>
-              <TableCell align="right">Block</TableCell>
-              <TableCell align="right">Bush</TableCell>
-              <TableCell align="right">Box</TableCell>
-              <TableCell align="right">Time</TableCell>
-              <TableCell align="right">Notes</TableCell>
-              <TableCell align="right">Project</TableCell>
-              <TableCell align="right">Stage</TableCell>
-              <TableCell align="right">Week</TableCell>
-              <TableCell align="right">Post Harvest</TableCell>
+              <TableRow>
+                {headerCells.map((header) => (
+                  <TableCell 
+                    key={header} 
+                    align="right" 
+                    style={{ 
+                      fontWeight: 'bold', 
+                      backgroundColor: '#e3f2fd' // Light blue background for each header cell
+                    }}
+                  >
+                    {header}
+                  </TableCell>
+                ))}
             </TableRow>
           </TableHead>
           <TableBody>
