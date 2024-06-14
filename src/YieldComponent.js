@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { TablePagination, TextField, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { TablePagination, TextField, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 import axios from 'axios';
 
 function YieldComponent() {
     const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(false);
     const [columns, setColumns] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -12,7 +11,6 @@ function YieldComponent() {
     const [searchTerm, setSearchTerm] = useState('');
 
     const fetchData = async (currentPage, currentRowsPerPage, currentSearchTerm) => {
-        setLoading(true);
         try {
             const response = await axios.get('https://savaglisic2001.pythonanywhere.com/pivot_fruit_quality', {
                 params: {
@@ -27,15 +25,14 @@ function YieldComponent() {
             if (response.data.data.length > 0) {
                 const firstRow = response.data.data[0];
                 const weekColumns = Object.keys(firstRow)
-                    .filter(key => key.includes('Week') && key !== 'TotalMass' && key !== 'genotype')
+                    .filter(key => key.includes('Week') && key !== 'TotalMass' && key !== 'genotype' && key !== 'site')
                     .sort((a, b) => parseInt(a.match(/\d+/)[0], 10) - parseInt(b.match(/\d+/)[0], 10));
-                setColumns(['genotype', ...weekColumns, 'TotalMass']);
+                setColumns(['genotype', 'site', ...weekColumns, 'TotalMass']);
             }
         } catch (error) {
             console.error('Error fetching data:', error);
         }
-        setLoading(false);
-    };    
+    };
 
     useEffect(() => {
         fetchData(page, rowsPerPage, '');
@@ -68,9 +65,27 @@ function YieldComponent() {
         return column.includes('Week') && value === '0';
     };
 
+    // Function to handle the Excel download button click
+    const handleDownloadExcel = () => {
+        const url = 'https://savaglisic2001.pythonanywhere.com/download_yield';
+        axios.get(url, { responseType: 'blob' })
+            .then((response) => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'yield_data.xlsx'); // or any other extension
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
+            .catch((error) => {
+                console.error('Error downloading the file:', error);
+            });
+    };
+
     return (
         <div style={{ padding: 20 }}>
-            <Typography variant="h4" textAlign="center">Yield by Genotype by Week</Typography>
+            <Typography variant="h4" textAlign="center">Yield by Genotype, Site by Week</Typography>
             <TextField
                 label="Search by Genotype"
                 variant="outlined"
@@ -80,6 +95,15 @@ function YieldComponent() {
                 onChange={handleSearchChange}
                 onKeyDown={handleKeyPress}
             />
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleDownloadExcel}
+                >
+                    Download Excel
+                </Button>
+            </div>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
